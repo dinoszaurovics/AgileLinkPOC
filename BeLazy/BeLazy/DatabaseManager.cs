@@ -7,7 +7,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
 
-namespace AgileLink
+namespace BeLazy
 {
     internal class DatabaseManager
     {

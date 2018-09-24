@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AgileLink
+namespace BeLazy
 {
     internal class UplinkManager
     {

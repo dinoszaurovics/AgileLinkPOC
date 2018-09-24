@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace AgileLink
+namespace BeLazy
 {
     internal class DatabaseInterface
     {

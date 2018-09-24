@@ -1,4 +1,4 @@
-﻿namespace AgileLink
+﻿namespace BeLazy
 {
     internal class Link
     {

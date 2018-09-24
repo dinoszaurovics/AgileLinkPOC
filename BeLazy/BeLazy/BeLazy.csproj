@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B9E22DAF-468B-4645-9656-FD1480352CC6}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>AgileLink</RootNamespace>
-    <AssemblyName>AgileLink</AssemblyName>
+    <RootNamespace>BeLazy</RootNamespace>
+    <AssemblyName>BeLazy</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

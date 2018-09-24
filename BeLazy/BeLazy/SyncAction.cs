@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace AgileLink
+namespace BeLazy
 {
     internal class SyncAction
     {
@@ -36,7 +36,7 @@ namespace AgileLink
         private async Task<bool> ProjectTransferAsync(DownlinkManager dlm, UplinkManager ulm)
         {
             Project project = dlm.GenerateAbstractProject();
-            ulm.GenerateUplinkProject(project);
+            await ulm.GenerateUplinkProject(project);
             return true;
         }
     }

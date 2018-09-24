@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AgileLink
+namespace BeLazy
 {
     internal class SyncLinkProcessor
     {

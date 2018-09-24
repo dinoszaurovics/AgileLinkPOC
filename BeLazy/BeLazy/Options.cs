@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AgileLink
+namespace BeLazy
 {
     internal static class Options
     {

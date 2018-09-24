@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AgileLink")]
+[assembly: AssemblyTitle("BeLazy")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AgileLink")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCompany("BeLazy")]
+[assembly: AssemblyProduct("BeLazy")]
+[assembly: AssemblyCopyright("Copyright ©  2018 BeLazy.cat")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
