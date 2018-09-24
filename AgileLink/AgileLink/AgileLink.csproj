@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -42,8 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseManager.cs" />
+    <Compile Include="DatabaseInterface.cs" />
+    <Compile Include="DownlinkManager.cs" />
+    <Compile Include="Link.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SyncAction.cs" />
+    <Compile Include="SyncLinkProcessor.cs" />
+    <Compile Include="UplinkManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
