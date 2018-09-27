@@ -13,10 +13,11 @@ namespace BeLazy
             this.link = link;
         }
 
-        internal async Task<bool> GenerateUplinkProject(Project project)
+        internal async Task<bool> GenerateUplinkProjectAsync(Project[] projects)
         {
-            Thread.Sleep(1000);
-            Log.AddLog("Uploading project to Uplink server");
+            await Task.Delay(2000);
+            Log.AddLog("Uploaded project to Uplink server");
+            return true;
         }
     }
 }

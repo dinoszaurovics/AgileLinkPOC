@@ -9,4 +9,7 @@ namespace BeLazy
             Console.WriteLine(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " - " + errorLevel + " - " + message);
         }
     }
+
+    internal enum ErrorLevels { Fatal, Critical, Error, Warning, Information }
+
 }

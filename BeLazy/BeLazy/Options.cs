@@ -11,5 +11,5 @@ namespace BeLazy
         }
     }
 
-    internal enum ErrorLevels { Fatal, Critical, Error, Warning, Information }
+
 }

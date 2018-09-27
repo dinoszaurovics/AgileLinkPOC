@@ -9,21 +9,17 @@ namespace BeLazy
 {
     class Program
     {
-        
+
         static void Main(string[] args)
         {
             try
             {
                 Options.Initialize();
 
-//                while (true)
-                {
-                    SyncLinkProcessor slp = new SyncLinkProcessor();
-                    Log.AddLog("Thread returned to Main", ErrorLevels.Information);
-                    slp.ManageSyncTasks();
-                    Log.AddLog("Running finished" , ErrorLevels.Information);
-                    //Thread.Sleep(60000);
-                }
+                SyncLinkProcessor slp = new SyncLinkProcessor();
+                Log.AddLog("Thread returned to Main", ErrorLevels.Information);
+                slp.ManageSyncTasks();
+                Log.AddLog("Running finished", ErrorLevels.Information);
 
                 Console.ReadKey();
             }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeLazy", "AgileLink\BeLazy.csproj", "{B9E22DAF-468B-4645-9656-FD1480352CC6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeLazy", "BeLazy\BeLazy.csproj", "{B9E22DAF-468B-4645-9656-FD1480352CC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2BD24DEA-7301-41D5-80A8-EF6402391633}
+		SolutionGuid = {A1D7650E-D04A-49B0-B8A1-70AFAB4CDA3D}
 	EndGlobalSection
 EndGlobal

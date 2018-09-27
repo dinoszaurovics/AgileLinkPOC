@@ -18,7 +18,7 @@ namespace BeLazy
                 {
                     SyncAction sa = new SyncAction(linkID);
                     syncActions.Add(sa);
-                    Task syncTask = sa.ProcessSyncAsync();
+                    Task<bool> syncTask = sa.ProcessSyncAsync();
                     syncTasks.Add(syncTask);
                 }
                 catch (Exception ex)
@@ -33,7 +33,7 @@ namespace BeLazy
             Task.WaitAll(syncTasks.ToArray());
             foreach (SyncAction syncAction in syncActions)
             {
-                Log.AddLog((syncAction.synxSuccess ? "Sync succesful" : "Sync failed") + " at " + syncAction.syncFinished.ToLongTimeString());
+                Log.AddLog(syncAction.syncSuccess ? "Sync succesful" : "Sync failed");
             }
         }
     }

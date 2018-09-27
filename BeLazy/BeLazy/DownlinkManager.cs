@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace BeLazy
 {
@@ -11,11 +12,22 @@ namespace BeLazy
             this.link = link;
         }
 
-        internal Project GenerateAbstractProject()
+        internal async Task<Project[]> GenerateAbstractProjectAsync()
         {
-            Project project = new Project();
-            Log.AddLog("Downloading project from Downlink server");
-            return project;
+            Project[] projects;
+            
+            switch (link.DownlinkBTMSSystemName)
+            {
+                case "Transact":
+                    TransactDownloadInterface tdi = new TransactDownloadInterface(link);
+                    projects = await tdi.GetProjectsAsync();
+                    break;
+                default:
+                    projects = null;
+                    break;
+            }
+            
+            return projects;
         }
     }
 }
