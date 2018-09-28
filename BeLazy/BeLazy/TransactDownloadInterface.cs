@@ -43,79 +43,86 @@ namespace BeLazy
         {
             foreach (TransactProject transactProject in tp.data)
             {
-                Project project = new Project();
-
-                project.ExternalProjectCode = transactProject.number;
-                switch (transactProject.status)
+                try
                 {
-                    case "Confirmed":
-                        project.Status = ProjectStatus.InProgress;
-                        break;
-                    case "Not confirmed":
-                        project.Status = ProjectStatus.New;
-                        break;
-                    default:
-                        project.Status = ProjectStatus.Undefined;
-                        break;
-                }
+                    Project project = new Project();
 
-                project.InternalProjectCode = transactProject.your_processing_number;
+                    project.ExternalProjectCode = transactProject.number;
+                    switch (transactProject.status)
+                    {
+                        case "Confirmed":
+                            project.Status = ProjectStatus.InProgress;
+                            break;
+                        case "Not confirmed":
+                            project.Status = ProjectStatus.New;
+                            break;
+                        default:
+                            project.Status = ProjectStatus.Undefined;
+                            break;
+                    }
 
-                DateTime tempDT = DateTime.MinValue;
-                if (DateTime.TryParse(transactProject.date_ordered, out tempDT))
-                {
-                    project.DateOrdered = tempDT;
-                }
-                else
-                {
-                    project.DateOrdered = DateTime.Now;
-                }
+                    project.InternalProjectCode = transactProject.your_processing_number;
 
-                if (DateTime.TryParse(transactProject.date_confirmed, out tempDT))
-                {
-                    project.DateApproved = tempDT;
-                }
-                else
-                {
-                    project.DateApproved = DateTime.Now;
-                }
+                    DateTime tempDT = DateTime.MinValue;
+                    if (DateTime.TryParse(transactProject.date_ordered, out tempDT))
+                    {
+                        project.DateOrdered = tempDT;
+                    }
+                    else
+                    {
+                        project.DateOrdered = DateTime.Now;
+                    }
 
-                if (DateTime.TryParse(transactProject.date_delivery, out tempDT))
-                {
-                    project.Deadline = tempDT;
-                }
-                else
-                {
-                    project.Deadline = DateTime.Now;
-                    Log.AddLog("Deadline could not be parsed.", ErrorLevels.Error);
-                }
+                    if (DateTime.TryParse(transactProject.date_confirmed, out tempDT))
+                    {
+                        project.DateApproved = tempDT;
+                    }
+                    else
+                    {
+                        project.DateApproved = DateTime.Now;
+                    }
 
-                project.ExternalProjectManagerName = transactProject.project_coordinator;
-                project.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
-                project.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
-                project.EndCustomer = transactProject.end_customer;
-                project.Speciality = MappingHelper.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
-                project.SourceLanguage = MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
-                project.TargetLanguage = MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target);
-                project.Workflow = transactProject.to_do;
-                project.CATTool = transactProject.system;
-                project.AnalysisResult = transactProject.scaling;
+                    if (DateTime.TryParse(transactProject.date_delivery, out tempDT))
+                    {
+                        project.Deadline = tempDT;
+                    }
+                    else
+                    {
+                        project.Deadline = DateTime.Now;
+                        Log.AddLog("Deadline could not be parsed.", ErrorLevels.Error);
+                    }
 
-                double payableVolume = 0.0;
-                if (double.TryParse(transactProject.quantity, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out payableVolume))
-                {
-                    project.PayableVolume = payableVolume;
+                    project.ExternalProjectManagerName = transactProject.project_coordinator;
+                    project.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
+                    project.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
+                    project.EndCustomer = transactProject.end_customer;
+                    project.SpecialityID = MappingHelper.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
+                    project.SourceLanguageID = MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
+                    project.TargetLanguageID = MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target);
+                    project.Workflow = transactProject.to_do;
+                    project.CATTool = transactProject.system;
+                    project.AnalysisResult = transactProject.scaling;
+
+                    double payableVolume = 0.0;
+                    if (double.TryParse(transactProject.quantity, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out payableVolume))
+                    {
+                        project.PayableVolume = payableVolume;
+                    }
+                    else
+                    {
+                        project.PayableVolume = 0;
+                    }
+
+                    project.PayableUnitID = MappingHelper.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
+
+                    project.Instructions = transactProject.instructions;
+
+                    projects.Add(project);
                 }
-                else
+                catch(Exception ex)
                 {
-                    project.PayableVolume = 0;
+                    Log.AddLog("Processing Transact project failed:" + ex.Message, ErrorLevels.Error);
                 }
-
-                project.PayableUnit = MappingHelper.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
-
-                project.Instructions = transactProject.instructions;
-                
-                projects.Add(project);
             }
         }
     }

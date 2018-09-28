@@ -15,7 +15,7 @@ namespace BeLazy
 
         internal async Task<bool> GenerateUplinkProjectAsync(Project[] projects)
         {
-            await Task.Delay(2000);
+            await Task.Delay(10);
             Log.AddLog("Uploaded project to Uplink server");
             return true;
         }

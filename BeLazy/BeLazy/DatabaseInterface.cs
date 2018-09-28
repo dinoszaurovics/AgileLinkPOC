@@ -47,7 +47,7 @@ namespace BeLazy
             {
                 DataRow dr = dt.Rows[0];
 
-                link.UplinkUserID = (Int32) dr["uplinkUserID"];
+                link.UplinkUserID = (Int32)dr["uplinkUserID"];
                 link.DownlinkUserID = (Int32)dr["downlinkUserID"];
                 link.UplinkBTMSSystemID = (Int32)dr["UplinkBTMSSystemID"];
                 link.UplinkCTMSSystemID = (Int32)dr["UplinkCTMSSystemID"];
@@ -81,6 +81,23 @@ namespace BeLazy
 
             }
 
+        }
+
+        internal static int GetMappingToAbstractValue(string idToReturn, string table, int tMSSystemID, string searchField, string itemName)
+        {
+            string SQLcommand = String.Format("SELECT {0} FROM {1} WHERE TMSSystemTypeID = {2} AND {3} = '{4}' ",
+               idToReturn, table, tMSSystemID, searchField, itemName);
+
+            DataTable dt = DatabaseManager.ExecuteSQLSelect(SQLcommand);
+            if (dt.Rows.Count != 1)
+            {
+                throw new Exception("Mapping value is not found: " + tMSSystemID + " - " + searchField + " - " + itemName);
+            }
+            else
+            {
+                DataRow dr = dt.Rows[0];
+                return Convert.ToInt32(dr[idToReturn]);
+            }
         }
     }
 }

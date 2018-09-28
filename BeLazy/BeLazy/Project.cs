@@ -15,14 +15,14 @@ namespace BeLazy
         public string ExternalProjectManagerEmail { get; internal set; }
         public string ExternalProjectManagerPhone { get; internal set; }
         public string EndCustomer { get; internal set; }
-        public string Speciality { get; internal set; }
-        public string SourceLanguage { get; internal set; }
-        public string TargetLanguage { get; internal set; }
+        public int SpecialityID { get; internal set; }
+        public int SourceLanguageID { get; internal set; }
+        public int TargetLanguageID { get; internal set; }
         public List<string> Workflow { get; internal set; }
         public string CATTool { get; internal set; }
         public List<string> AnalysisResult { get; internal set; }
         public double PayableVolume { get; internal set; }
-        public string PayableUnit { get; internal set; }
+        public int PayableUnitID { get; internal set; }
         public string Instructions { get; internal set; }
     }
 
