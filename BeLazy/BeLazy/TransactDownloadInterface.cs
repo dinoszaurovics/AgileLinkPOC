@@ -15,7 +15,7 @@ namespace BeLazy
         public TransactDownloadInterface(Link link)
         {
             this.link = link;
-            client.BaseAddress = new Uri("https://transact.transline.de/api/vendor?api"); //  new Uri(link.DownlinkBTMSURL);
+            client.BaseAddress = new Uri(link.DownlinkBTMSURL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
@@ -119,7 +119,7 @@ namespace BeLazy
 
                     projects.Add(project);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Log.AddLog("Processing Transact project failed:" + ex.Message, ErrorLevels.Error);
                 }
@@ -180,22 +180,47 @@ namespace BeLazy
         public string quantity_unit { get; set; }
         public string price_unit { get; set; }
         public string prize_total { get; set; }
-        public List<string> files { get; set; }
+        public List<TransactFile> files { get; set; }
         public string instructions { get; set; }
         public string customer_check_criteria { get; set; }
         public List<AcrossTask> across_tasks { get; set; }
-        public List<string> feedback_deliveries { get; set; }
+        public List<FeedbackDelivery> feedback_deliveries { get; set; }
         public List<string> delivery_format { get; set; }
 
         public TransactProject()
         {
             to_do = new List<string>();
             scaling = new List<string>();
-            files = new List<string>();
-            feedback_deliveries = new List<string>();
+            files = new List<TransactFile>();
+            feedback_deliveries = new List<FeedbackDelivery>();
             delivery_format = new List<string>();
             across_tasks = new List<AcrossTask>();
         }
+    }
+
+    public class TransactFile
+    {
+        public string file_name { get; set; }
+        public string date_created { get; set; }
+        public string date_expiration { get; set; }
+        public string size { get; set; }
+        public int download_count { get; set; }
+        public bool download_required { get; set; }
+        public string link { get; set; }
+    }
+
+    public class FeedbackDelivery
+    {
+        public int id { get; set; }
+        public string date_expected { get; set; }
+        public string date_delivered { get; set; }
+        public bool forced_delivery { get; set; }
+        public string comment { get; set; }
+        public string link_formalcheck { get; set; }
+        public string link_errorspy { get; set; }
+        public string link_download { get; set; }
+        public string status { get; set; }
+        public string reason { get; set; }
     }
 
     public class TransactProjectRequest

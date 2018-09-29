@@ -21,7 +21,7 @@ namespace BeLazy
                     break;
                 case MapType.Unit:
                     idToReturn = "UnitID";
-                    table = "tUnitMapping";
+                    table = "tUnitsMapping";
                     searchField = "UnitName";
                     break;
                 case MapType.Workflow:

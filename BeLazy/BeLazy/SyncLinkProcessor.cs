@@ -6,7 +6,7 @@ namespace BeLazy
 {
     internal class SyncLinkProcessor
     {
-        List<Task> syncTasks = new List<Task>();
+        List<Task<bool>> syncTasks = new List<Task<bool>>();
         List<SyncAction> syncActions = new List<SyncAction>();
 
         public SyncLinkProcessor()

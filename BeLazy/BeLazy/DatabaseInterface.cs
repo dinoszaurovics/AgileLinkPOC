@@ -46,13 +46,14 @@ namespace BeLazy
             else
             {
                 DataRow dr = dt.Rows[0];
+                int value;
 
-                link.UplinkUserID = (Int32)dr["uplinkUserID"];
-                link.DownlinkUserID = (Int32)dr["downlinkUserID"];
-                link.UplinkBTMSSystemID = (Int32)dr["UplinkBTMSSystemID"];
-                link.UplinkCTMSSystemID = (Int32)dr["UplinkCTMSSystemID"];
-                link.DownlinkBTMSSystemID = (Int32)dr["DownlinkBTMSSystemID"];
-                link.DownlinkCTMSSystemID = (Int32)dr["DownlinkCTMSSystemID"];
+                link.UplinkUserID = GetIntValue(dr["uplinkUserID"].ToString());
+                link.DownlinkUserID = GetIntValue(dr["downlinkUserID"].ToString());
+                link.UplinkBTMSSystemID = GetIntValue(dr["UplinkBTMSSystemID"].ToString());
+                link.UplinkCTMSSystemID = GetIntValue(dr["UplinkCTMSSystemID"].ToString());
+                link.DownlinkBTMSSystemID = GetIntValue(dr["DownlinkBTMSSystemID"].ToString());
+                link.DownlinkCTMSSystemID = GetIntValue(dr["DownlinkCTMSSystemID"].ToString());
 
                 link.DownlinkCTMSPassword = dr["dcPassword"].ToString();
                 link.DownlinkCTMSURL = dr["dcURL"].ToString();
@@ -77,10 +78,20 @@ namespace BeLazy
                 link.UplinkBTMSUsername = dr["ubUserName"].ToString();
                 link.UplinkBTMSSystemName = dr["ubTMSName"].ToString();
                 link.UplinkBTMSSystemVersion = dr["ubTMSVersion"].ToString();
-
-
             }
+        }
 
+        private static int GetIntValue(string value)
+        {
+            int result;
+            if (Int32.TryParse(value, out result))
+            {
+                return result;
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         internal static int GetMappingToAbstractValue(string idToReturn, string table, int tMSSystemID, string searchField, string itemName)
