@@ -110,5 +110,68 @@ namespace BeLazy
                 return Convert.ToInt32(dr[idToReturn]);
             }
         }
+
+        internal static void SaveProjectToDatabase(Project project, Link link)
+        {
+            string SQLcommand = "INSERT INTO tProject (" +
+                "[LinkID], " +
+                "[ExternalProjectCode], " +
+                "[Status], " +
+                "[InternalProjectCode], " +
+                "[DateOrdered], " +
+                "[DateApproved], " +
+                "[Deadline], " +
+                "[ExternalProjectManagerName], " +
+                "[ExternalProjectManagerEmail], " +
+                "[ExternalProjectManagerPhone], " +
+                "[EndCustomer], " +
+                "[SpecialityID], " +
+                "[SourceLanguageID], " +
+                "[CATTool], " +
+                "[PayableVolume], " +
+                "[PayableUnitID], " +
+                "[PMNotes] " +
+                ") VALUES (" +
+                link.linkID + ", " +
+                SQLEscape(project.ExternalProjectCode) + ", " +
+                SQLEscape(project.Status.ToString()) + ", " +
+                SQLEscape(project.InternalProjectCode) + ", " +
+                SqlDateTime(project.DateOrdered) + ", " +
+                SqlDateTime(project.DateApproved) + ", " +
+                SqlDateTime(project.Deadline) + ", " +
+                SQLEscape(project.ExternalProjectManagerName) + ", " +
+                SQLEscape(project.ExternalProjectManagerEmail) + ", " +
+                SQLEscape(project.ExternalProjectManagerPhone) + ", " +
+                SQLEscape(project.EndCustomer) + ", " +
+                project.SpecialityID.ToString() + ", " +
+                project.SourceLanguageID.ToString() + ", " +
+                SQLEscape(project.CATTool) + ", " +
+                project.PayableVolume.ToString() + ", " +
+                project.PayableUnitID.ToString() + ", " + 
+                project.Instructions
+                +")"
+                ;
+
+            int projectID = DatabaseManager.ExecuteSQLInsert(SQLcommand);
+
+            SQLcommand = "INSERT INTO tProjectTargetLanguages (ProjectID, LanguageID) VALUES (" +
+                projectID.ToString() + ", " +
+                project.TargetLanguageID.ToString() +
+                ")";
+
+            DatabaseManager.ExecuteSQLInsert(SQLcommand);
+        }
+
+        private static string SqlDateTime(DateTime value)
+        {
+            string result = value.ToString("yyyy-MM-dd HH:mm:ss");
+            return result;
+        }
+
+        private static string SQLEscape(string value)
+        {
+            string result = "'" + value.Replace("'", "''") + "'";
+            return result;
+        }
     }
 }

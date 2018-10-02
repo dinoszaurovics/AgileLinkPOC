@@ -8,6 +8,7 @@ namespace BeLazy
         private int linkID;
         public bool syncSuccess;
         public DateTime syncFinished;
+        internal Link link;
 
         public SyncAction(int linkID)
         {
@@ -18,7 +19,7 @@ namespace BeLazy
         {
             try
             {
-                Link link = new Link(linkID);
+                link = new Link(linkID);
                 DownlinkManager dlm = new DownlinkManager(link);
                 UplinkManager ulm = new UplinkManager(link);
 
@@ -40,7 +41,7 @@ namespace BeLazy
             Project[] projects = await dlm.GenerateAbstractProjectAsync();
             if (projects.Length != 0)
             {
-                StatsHelper.AddProjectStats(projects);
+                StatsHelper.AddProjectStats(projects, link);
                 await ulm.GenerateUplinkProjectAsync(projects);
                 return true;
             }

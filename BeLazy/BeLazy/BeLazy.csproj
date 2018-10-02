@@ -64,6 +64,7 @@
     <Compile Include="SyncLinkProcessor.cs" />
     <Compile Include="TransactDownloadInterface.cs" />
     <Compile Include="UplinkManager.cs" />
+    <Compile Include="XTRFUploadInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

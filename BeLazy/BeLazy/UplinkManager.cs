@@ -15,9 +15,19 @@ namespace BeLazy
 
         internal async Task<bool> GenerateUplinkProjectAsync(Project[] projects)
         {
-            await Task.Delay(10);
-            Log.AddLog("Uploaded project to Uplink server");
-            return true;
+            bool result = false;
+            switch (link.UplinkBTMSSystemName)
+            {
+                case "XTRF":
+                    XTRFUploadInterface tdi = new XTRFUploadInterface(link, projects);
+                    result = await tdi.UploadProjects();
+                    break;
+                default:
+                    break;
+            }
+
+            Log.AddLog("Uploaded projects to Uplink server");
+            return result;
         }
     }
 }

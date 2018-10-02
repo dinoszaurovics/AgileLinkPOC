@@ -4,9 +4,13 @@ namespace BeLazy
 {
     internal class StatsHelper
     {
-        internal static void AddProjectStats(Project[] projects)
+       
+        internal static void AddProjectStats(Project[] projects, Link link)
         {
-            throw new NotImplementedException();
+            foreach (Project project in projects)
+            {
+                DatabaseInterface.SaveProjectToDatabase(project, link);
+            }
         }
     }
 }
