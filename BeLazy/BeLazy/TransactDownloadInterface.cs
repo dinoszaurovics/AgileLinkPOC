@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using TransactJSON;
 
 namespace BeLazy
 {
@@ -45,79 +46,85 @@ namespace BeLazy
             {
                 try
                 {
-                    Project project = new Project();
+                    // This is test line to filter for a single project
 
-                    project.ExternalProjectCode = transactProject.number;
-                    switch (transactProject.status)
+                    if (transactProject.number == "TLR0147694/10/1")
                     {
-                        case "Confirmed":
-                            project.Status = ProjectStatus.InProgress;
-                            break;
-                        case "Not confirmed":
-                            project.Status = ProjectStatus.New;
-                            break;
-                        default:
-                            project.Status = ProjectStatus.Undefined;
-                            break;
-                    }
 
-                    project.InternalProjectCode = transactProject.your_processing_number;
+                        Project project = new Project();
 
-                    DateTime tempDT = DateTime.MinValue;
-                    if (DateTime.TryParse(transactProject.date_ordered, out tempDT))
-                    {
-                        project.DateOrdered = tempDT;
-                    }
-                    else
-                    {
-                        project.DateOrdered = DateTime.Now;
-                    }
+                        project.ExternalProjectCode = transactProject.number;
+                        switch (transactProject.status)
+                        {
+                            case "Confirmed":
+                                project.Status = ProjectStatus.InProgress;
+                                break;
+                            case "Not confirmed":
+                                project.Status = ProjectStatus.New;
+                                break;
+                            default:
+                                project.Status = ProjectStatus.Undefined;
+                                break;
+                        }
 
-                    if (DateTime.TryParse(transactProject.date_confirmed, out tempDT))
-                    {
-                        project.DateApproved = tempDT;
-                    }
-                    else
-                    {
-                        project.DateApproved = DateTime.Now;
-                    }
+                        project.InternalProjectCode = transactProject.your_processing_number;
 
-                    if (DateTime.TryParse(transactProject.date_delivery, out tempDT))
-                    {
-                        project.Deadline = tempDT;
+                        DateTime tempDT = DateTime.MinValue;
+                        if (DateTime.TryParse(transactProject.date_ordered, out tempDT))
+                        {
+                            project.DateOrdered = tempDT;
+                        }
+                        else
+                        {
+                            project.DateOrdered = DateTime.Now;
+                        }
+
+                        if (DateTime.TryParse(transactProject.date_confirmed, out tempDT))
+                        {
+                            project.DateApproved = tempDT;
+                        }
+                        else
+                        {
+                            project.DateApproved = DateTime.Now;
+                        }
+
+                        if (DateTime.TryParse(transactProject.date_delivery, out tempDT))
+                        {
+                            project.Deadline = tempDT;
+                        }
+                        else
+                        {
+                            project.Deadline = DateTime.Now;
+                            Log.AddLog("Deadline could not be parsed.", ErrorLevels.Error);
+                        }
+
+                        project.ExternalProjectManagerName = transactProject.project_coordinator;
+                        project.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
+                        project.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
+                        project.EndCustomer = transactProject.end_customer;
+                        project.SpecialityID = MappingHelper.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
+                        project.SourceLanguageID = MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
+                        project.TargetLanguageIDs.Add(MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target));
+                        project.Workflow = transactProject.to_do[0];
+                        project.CATTool = transactProject.system;
+                        project.AnalysisResult = transactProject.scaling;
+
+                        double payableVolume = 0.0;
+                        if (double.TryParse(transactProject.quantity, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out payableVolume))
+                        {
+                            project.PayableVolume = payableVolume;
+                        }
+                        else
+                        {
+                            project.PayableVolume = 0;
+                        }
+
+                        project.PayableUnitID = MappingHelper.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
+
+                        project.Instructions = transactProject.instructions;
+
+                        projects.Add(project);
                     }
-                    else
-                    {
-                        project.Deadline = DateTime.Now;
-                        Log.AddLog("Deadline could not be parsed.", ErrorLevels.Error);
-                    }
-
-                    project.ExternalProjectManagerName = transactProject.project_coordinator;
-                    project.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
-                    project.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
-                    project.EndCustomer = transactProject.end_customer;
-                    project.SpecialityID = MappingHelper.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
-                    project.SourceLanguageID = MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
-                    project.TargetLanguageID = MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target);
-                    project.Workflow = transactProject.to_do;
-                    project.CATTool = transactProject.system;
-                    project.AnalysisResult = transactProject.scaling;
-
-                    double payableVolume = 0.0;
-                    if (double.TryParse(transactProject.quantity, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out payableVolume))
-                    {
-                        project.PayableVolume = payableVolume;
-                    }
-                    else
-                    {
-                        project.PayableVolume = 0;
-                    }
-
-                    project.PayableUnitID = MappingHelper.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
-
-                    project.Instructions = transactProject.instructions;
-
-                    projects.Add(project);
                 }
                 catch (Exception ex)
                 {
@@ -126,7 +133,10 @@ namespace BeLazy
             }
         }
     }
+}
 
+namespace TransactJSON
+{ 
     public class TransactProjectList
     {
         public string code { get; set; }

@@ -36,7 +36,7 @@
         public string UplinkBTMSSystemName { get; set; }
         public string UplinkBTMSSystemVersion { get; set; }
 
-
+        public string ClientIDForUplinkProject { get; set; }
 
         public Link(int linkID)
         {

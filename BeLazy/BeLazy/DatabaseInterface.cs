@@ -46,14 +46,14 @@ namespace BeLazy
             else
             {
                 DataRow dr = dt.Rows[0];
-                int value;
-
+            
                 link.UplinkUserID = GetIntValue(dr["uplinkUserID"].ToString());
                 link.DownlinkUserID = GetIntValue(dr["downlinkUserID"].ToString());
                 link.UplinkBTMSSystemID = GetIntValue(dr["UplinkBTMSSystemID"].ToString());
                 link.UplinkCTMSSystemID = GetIntValue(dr["UplinkCTMSSystemID"].ToString());
                 link.DownlinkBTMSSystemID = GetIntValue(dr["DownlinkBTMSSystemID"].ToString());
                 link.DownlinkCTMSSystemID = GetIntValue(dr["DownlinkCTMSSystemID"].ToString());
+                link.ClientIDForUplinkProject = dr["ClientIDForUplinkProject"].ToString();
 
                 link.DownlinkCTMSPassword = dr["dcPassword"].ToString();
                 link.DownlinkCTMSURL = dr["dcURL"].ToString();
@@ -78,6 +78,7 @@ namespace BeLazy
                 link.UplinkBTMSUsername = dr["ubUserName"].ToString();
                 link.UplinkBTMSSystemName = dr["ubTMSName"].ToString();
                 link.UplinkBTMSSystemVersion = dr["ubTMSVersion"].ToString();
+
             }
         }
 
@@ -94,7 +95,7 @@ namespace BeLazy
             }
         }
 
-        internal static int GetMappingToAbstractValue(string idToReturn, string table, int tMSSystemID, string searchField, string itemName)
+        internal static int GetMappingForGeneralValues(string idToReturn, string table, int tMSSystemID, string searchField, string itemName)
         {
             string SQLcommand = String.Format("SELECT {0} FROM {1} WHERE TMSSystemTypeID = {2} AND {3} = '{4}' ",
                idToReturn, table, tMSSystemID, searchField, itemName);
@@ -102,12 +103,29 @@ namespace BeLazy
             DataTable dt = DatabaseManager.ExecuteSQLSelect(SQLcommand);
             if (dt.Rows.Count != 1)
             {
-                throw new Exception("Mapping value is not found: " + tMSSystemID + " - " + searchField + " - " + itemName);
+                throw new Exception("Mapping value is not valid: " + tMSSystemID + " - " + searchField + " - " + itemName);
             }
             else
             {
                 DataRow dr = dt.Rows[0];
                 return Convert.ToInt32(dr[idToReturn]);
+            }
+        }
+
+        internal static string GetMappingToUplinkValue(MapType mapType, Link link, string projectValue)
+        {
+            string SQLcommand = String.Format("SELECT MappedValue FROM tUplinkValueMapper WHERE LinkID = {0} AND WorkflowType = '{1}' AND ProjectValue = '{2}'",
+            link.linkID, mapType.ToString(), projectValue);
+
+            DataTable dt = DatabaseManager.ExecuteSQLSelect(SQLcommand);
+            if (dt.Rows.Count != 1)
+            {
+                throw new Exception("Mapping value is not found: " + projectValue + " - " + link.UplinkBTMSSystemName + " - " + mapType);
+            }
+            else
+            {
+                DataRow dr = dt.Rows[0];
+                return dr["MappedValue"].ToString();
             }
         }
 
@@ -147,24 +165,27 @@ namespace BeLazy
                 project.SourceLanguageID.ToString() + ", " +
                 SQLEscape(project.CATTool) + ", " +
                 project.PayableVolume.ToString() + ", " +
-                project.PayableUnitID.ToString() + ", " + 
-                project.Instructions
-                +")"
+                project.PayableUnitID.ToString() + ", " +
+                SQLEscape(project.Instructions)
+                + "); SELECT @@IDENTITY"
                 ;
 
             int projectID = DatabaseManager.ExecuteSQLInsert(SQLcommand);
-
-            SQLcommand = "INSERT INTO tProjectTargetLanguages (ProjectID, LanguageID) VALUES (" +
+            
+            foreach(int langID in project.TargetLanguageIDs)
+            {
+                SQLcommand = "INSERT INTO tProjectTargetLanguages (ProjectID, LanguageID) VALUES (" +
                 projectID.ToString() + ", " +
-                project.TargetLanguageID.ToString() +
-                ")";
+                langID.ToString() +
+                "); SELECT @@IDENTITY";
 
-            DatabaseManager.ExecuteSQLInsert(SQLcommand);
+                DatabaseManager.ExecuteSQLInsert(SQLcommand);
+            }
         }
 
         private static string SqlDateTime(DateTime value)
         {
-            string result = value.ToString("yyyy-MM-dd HH:mm:ss");
+            string result = "'" + value.ToString("yyyy-MM-dd HH:mm:ss") + "'";
             return result;
         }
 
