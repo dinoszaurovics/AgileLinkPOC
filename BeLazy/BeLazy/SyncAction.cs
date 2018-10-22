@@ -47,7 +47,7 @@ namespace BeLazy
             }
             else
             {
-                Log.AddLog("Project could not be created", ErrorLevels.Critical);
+                Log.AddLog("No project found.", ErrorLevels.Information);
                 return false;
             }
         }

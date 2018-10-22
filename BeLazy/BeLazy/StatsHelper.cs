@@ -9,7 +9,14 @@ namespace BeLazy
         {
             foreach (Project project in projects)
             {
-                DatabaseInterface.SaveProjectToDatabase(project, link);
+                try
+                {
+                    DatabaseInterface.SaveProjectToDatabase(project, link);
+                }
+                catch (Exception ex)
+                {
+                    Log.AddLog("Saving project to database failed: " + ex.Message, ErrorLevels.Error);
+                }
             }
         }
     }

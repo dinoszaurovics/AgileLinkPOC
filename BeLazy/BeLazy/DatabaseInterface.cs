@@ -82,6 +82,48 @@ namespace BeLazy
             }
         }
 
+        internal static Language GetLanguage(int languageID)
+        {
+            string SQLcommand = String.Format("SELECT FullName, ISO2, ISO3 FROM tLanguages WHERE LanguageID = {0}",
+            languageID);
+
+            DataTable dt = DatabaseManager.ExecuteSQLSelect(SQLcommand);
+            if (dt.Rows.Count != 1)
+            {
+                throw new Exception("Language not found: " + languageID);
+            }
+            else
+            {
+                DataRow dr = dt.Rows[0];
+                Language language = new Language()
+                {
+                    LanguageID = languageID,
+                    FullName = dr["FullName"].ToString(),
+                    ISO2 = dr["ISO2"].ToString(),
+                    ISO3 = dr["ISO3"].ToString()
+                };
+
+                return language;
+            }
+        }
+
+        internal static string GetMappingScript(int linkID, MapType mapType)
+        {
+            string SQLcommand = String.Format("SELECT ScriptExpression FROM tMappingScripts WHERE MapType = '{0}' AND LinkID = {1} ",
+              mapType, linkID);
+
+            DataTable dt = DatabaseManager.ExecuteSQLSelect(SQLcommand);
+            if (dt.Rows.Count != 1)
+            {
+                throw new Exception("Error in script mapping: " + linkID + " - " + mapType);
+            }
+            else
+            {
+                DataRow dr = dt.Rows[0];
+                return dr["ScriptExpression"].ToString();
+            }
+        }
+
         private static int GetIntValue(string value)
         {
             int result;
@@ -148,9 +190,13 @@ namespace BeLazy
                 "[CATTool], " +
                 "[PayableVolume], " +
                 "[PayableUnitID], " +
-                "[PMNotes] " +
+                "[PriceUnit], " +
+                "[PriceTotal], " +
+                "[PMNotes], " +
+                "[VendorNotes], " +
+                "[ClientNotes] " +
                 ") VALUES (" +
-                link.linkID + ", " +
+                (link.linkID.ToString() ?? "null") + ", " +
                 SQLEscape(project.ExternalProjectCode) + ", " +
                 SQLEscape(project.Status.ToString()) + ", " +
                 SQLEscape(project.InternalProjectCode) + ", " +
@@ -161,12 +207,16 @@ namespace BeLazy
                 SQLEscape(project.ExternalProjectManagerEmail) + ", " +
                 SQLEscape(project.ExternalProjectManagerPhone) + ", " +
                 SQLEscape(project.EndCustomer) + ", " +
-                project.SpecialityID.ToString() + ", " +
-                project.SourceLanguageID.ToString() + ", " +
+                (project.SpecialityID.ToString() ?? "null") + ", " +
+                (project.SourceLanguageID.ToString() ?? "null") + ", " +
                 SQLEscape(project.CATTool) + ", " +
-                project.PayableVolume.ToString() + ", " +
-                project.PayableUnitID.ToString() + ", " +
-                SQLEscape(project.Instructions)
+                (project.PayableVolume.ToString() ?? "null") + ", " +
+                (project.PayableUnitID.ToString() ?? "null") + ", " +
+                (project.PriceUnit.ToString() ?? "null") + ", " +
+                (project.PriceTotal.ToString() ?? "null") + ", " +
+                SQLEscape(project.PMNotes) + ", " +
+                SQLEscape(project.VendorNotes) + ", " +
+                SQLEscape(project.ClientNotes)
                 + "); SELECT @@IDENTITY"
                 ;
 
@@ -181,18 +231,56 @@ namespace BeLazy
 
                 DatabaseManager.ExecuteSQLInsert(SQLcommand);
             }
+
+            foreach (var analysisCategory in project.AnalysisCategories)
+            {
+                SQLcommand = "INSERT INTO tProjectAnalysisCategories " +
+                    "(ProjectID, StartPC, EndPC, WordCount, CharacterCount, SegmentCount, PlaceholderCount, Weight)" +
+                    " VALUES (" +
+                projectID.ToString() + ", " +
+                (analysisCategory.StartPc.ToString() ?? "null") + ", " +
+                (analysisCategory.EndPc.ToString() ?? "null") + ", " +
+                (analysisCategory.WordCount.ToString() ?? "null") + ", " +
+                (analysisCategory.CharacterCount.ToString() ?? "null") + ", " +
+                (analysisCategory.SegmentCount.ToString() ?? "null") + ", " +
+                (analysisCategory.PlaceholderCount.ToString() ?? "null") + ", " +
+                (analysisCategory.Weight.ToString() ?? "null") +
+                "); SELECT @@IDENTITY";
+
+                DatabaseManager.ExecuteSQLInsert(SQLcommand);
+            }
+
         }
 
-        private static string SqlDateTime(DateTime value)
+        private static string SqlDateTime(DateTime? value)
         {
-            string result = "'" + value.ToString("yyyy-MM-dd HH:mm:ss") + "'";
-            return result;
+            if (value != null)
+            {
+                string result = "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss") + "'";
+                return result;
+            }
+            else
+                return "null";
         }
 
         private static string SQLEscape(string value)
         {
+            if(String.IsNullOrEmpty(value))
+            {
+                return "null";
+            }
+
             string result = "'" + value.Replace("'", "''") + "'";
             return result;
         }
     }
+
+    class Language
+    {
+        public int LanguageID;
+        public string FullName;
+        public string ISO2;
+        public string ISO3;
+    }
+
 }

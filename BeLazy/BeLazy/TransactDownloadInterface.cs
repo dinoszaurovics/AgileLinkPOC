@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TransactJSON;
 
@@ -48,7 +49,7 @@ namespace BeLazy
                 {
                     // This is test line to filter for a single project
 
-                    if (transactProject.number == "TLR0147694/10/1")
+                    if (transactProject.number == "TLR0148702/10/1")
                     {
 
                         Project project = new Project();
@@ -102,14 +103,71 @@ namespace BeLazy
                         project.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
                         project.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
                         project.EndCustomer = transactProject.end_customer;
-                        project.SpecialityID = MappingHelper.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
-                        project.SourceLanguageID = MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
-                        project.TargetLanguageIDs.Add(MappingHelper.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target));
-                        project.Workflow = transactProject.to_do[0];
-                        project.CATTool = transactProject.system;
-                        project.AnalysisResult = transactProject.scaling;
+                        project.SpecialityID = MappingManager.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
+                        project.SourceLanguageID = MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
+                        project.TargetLanguageIDs.Add(MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target));
 
-                        double payableVolume = 0.0;
+                        project.Workflow = "";
+                        foreach (string to_do_item in transactProject.to_do)
+                        {
+                            if (project.Workflow == "")
+                            {
+                                project.Workflow += to_do_item;
+                            }
+                            else
+                            {
+                                project.Workflow += "¤" + to_do_item;
+                            }
+                        }
+
+                        project.CATTool = transactProject.system;
+
+                        Regex analysisLineMatcher = new Regex(@"^\s*(?<category>[\p{L}\d\s%-]+):\s*(?<wordcount>[\d,\.]+)\s*Words at\s*(?<weight>[\d\.]+)%;\s*$");
+
+                        foreach (string analysisLine in transactProject.scaling)
+                        {
+                            if (analysisLineMatcher.IsMatch(analysisLine))
+                            {
+                                Match analysisLineParser = analysisLineMatcher.Match(analysisLine);
+                                WordCountAnalysisItem wcai = new WordCountAnalysisItem();
+
+                                wcai.Weight = Double.Parse(analysisLineParser.Groups["weight"].ToString());
+                                wcai.WordCount = Double.Parse(analysisLineParser.Groups["wordcount"].ToString().Replace(",", ""));   // value can be 1,319 => 1319
+                                string category = analysisLineParser.Groups["category"].ToString();
+
+                                switch (category)
+                                {
+                                    case "Repetitions":
+                                        wcai.StartPc = -1;
+                                        wcai.EndPc = -1;
+                                        break;
+                                    case "100%":
+                                        wcai.StartPc = 100;
+                                        wcai.EndPc = 100;
+                                        break;
+                                    case "No Match":
+                                        wcai.StartPc = 0;
+                                        wcai.EndPc = 0;
+                                        break;
+                                    default:
+                                        Regex pcCategoryMatcher = new Regex(@"^\s*(?<startPc>\d+)%\s*-\s*(?<endPc>\d+)%\s*$");
+                                        if (pcCategoryMatcher.IsMatch(category))
+                                        {
+                                            Match pcParser = pcCategoryMatcher.Match(category);
+                                            wcai.StartPc = int.Parse(pcParser.Groups["startPc"].ToString());
+                                            wcai.EndPc = int.Parse(pcParser.Groups["endPc"].ToString());
+                                        }
+                                        break;
+                                }
+
+                                project.AnalysisCategories.Add(wcai);
+                            }
+
+                        }
+                    
+
+                        double payableVolume = 0.0, priceTotal = 0.0, priceUnit = 0.0;
+
                         if (double.TryParse(transactProject.quantity, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out payableVolume))
                         {
                             project.PayableVolume = payableVolume;
@@ -119,10 +177,28 @@ namespace BeLazy
                             project.PayableVolume = 0;
                         }
 
-                        project.PayableUnitID = MappingHelper.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
+                        if (double.TryParse(transactProject.price_unit, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out priceUnit))
+                        {
+                            project.PriceUnit = priceUnit;
+                        }
+                        else
+                        {
+                            project.PriceUnit = 0;
+                        }
 
-                        project.Instructions = transactProject.instructions;
+                        if (double.TryParse(transactProject.prize_total, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out priceTotal))
+                        {
+                            project.PriceTotal = priceTotal;
+                        }
+                        else
+                        {
+                            project.PriceTotal = 0;
+                        }
 
+                        project.PayableUnitID = MappingManager.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
+                        project.VendorNotes = transactProject.instructions;
+                        project.PMNotes = transactProject.customer_check_criteria;
+                        project.ClientNotes = transactProject.feedback_deliveries[0].link_download;
                         projects.Add(project);
                     }
                 }
@@ -136,7 +212,7 @@ namespace BeLazy
 }
 
 namespace TransactJSON
-{ 
+{
     public class TransactProjectList
     {
         public string code { get; set; }
