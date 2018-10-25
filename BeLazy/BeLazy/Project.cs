@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BeLazy
 {
-    internal class Project
+    internal class AbstractProject
     {
         public string ExternalProjectCode { get; internal set; }
         public ProjectStatus Status { get; internal set; }
@@ -53,7 +53,7 @@ namespace BeLazy
             }
         }
 
-        public Project()
+        public AbstractProject()
         {
             TargetLanguageIDs = new List<int>();
             AnalysisCategories = new List<WordCountAnalysisItem>();

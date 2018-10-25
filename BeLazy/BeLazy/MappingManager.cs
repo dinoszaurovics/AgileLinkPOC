@@ -60,7 +60,7 @@ namespace BeLazy
 
         }
 
-        internal static string GetScriptedValue(Link link, MapType mapType, Project project)
+        internal static string GetScriptedValue(Link link, MapType mapType, AbstractProject project)
         {
             string script = DatabaseInterface.GetMappingScript(link.linkID, mapType);
             string result = ScriptingHelper.EvalutaScriptResult(script, project);

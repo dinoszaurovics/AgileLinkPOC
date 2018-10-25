@@ -171,7 +171,7 @@ namespace BeLazy
             }
         }
 
-        internal static void SaveProjectToDatabase(Project project, Link link)
+        internal static void SaveProjectToDatabase(AbstractProject project, Link link)
         {
             string SQLcommand = "INSERT INTO tProject (" +
                 "[LinkID], " +

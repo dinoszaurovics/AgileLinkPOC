@@ -5,9 +5,9 @@ namespace BeLazy
     internal class StatsHelper
     {
        
-        internal static void AddProjectStats(Project[] projects, Link link)
+        internal static void AddProjectStats(AbstractProject[] projects, Link link)
         {
-            foreach (Project project in projects)
+            foreach (AbstractProject project in projects)
             {
                 try
                 {

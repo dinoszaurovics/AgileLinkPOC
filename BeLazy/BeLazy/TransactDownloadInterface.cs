@@ -23,7 +23,7 @@ namespace BeLazy
                 new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        internal async Task<Project[]> GetProjectsAsync()
+        internal async Task<AbstractProject[]> GetProjectsAsync()
         {
             TransactProjectRequest tpr = new TransactProjectRequest();
             tpr.method = "GetListActive";
@@ -33,7 +33,7 @@ namespace BeLazy
             HttpResponseMessage response = await client.PostAsJsonAsync("", tpr);
             response.EnsureSuccessStatusCode();
             TransactProjectList tp = await response.Content.ReadAsAsync<TransactProjectList>();
-            List<Project> projects = new List<Project>();
+            List<AbstractProject> projects = new List<AbstractProject>();
 
             MapProject(tp, ref projects);
 
@@ -41,7 +41,7 @@ namespace BeLazy
 
         }
 
-        private void MapProject(TransactProjectList tp, ref List<Project> projects)
+        private void MapProject(TransactProjectList tp, ref List<AbstractProject> projects)
         {
             foreach (TransactProject transactProject in tp.data)
             {
@@ -49,78 +49,78 @@ namespace BeLazy
                 {
                     // This is test line to filter for a single project
 
-                    if (transactProject.number == "TLR0148702/10/1")
+                    if (transactProject.number == "TLR0148500/50/1")
                     {
 
-                        Project project = new Project();
+                        AbstractProject abstractProject = new AbstractProject();
 
-                        project.ExternalProjectCode = transactProject.number;
+                        abstractProject.ExternalProjectCode = transactProject.number;
                         switch (transactProject.status)
                         {
                             case "Confirmed":
-                                project.Status = ProjectStatus.InProgress;
+                                abstractProject.Status = ProjectStatus.InProgress;
                                 break;
                             case "Not confirmed":
-                                project.Status = ProjectStatus.New;
+                                abstractProject.Status = ProjectStatus.New;
                                 break;
                             default:
-                                project.Status = ProjectStatus.Undefined;
+                                abstractProject.Status = ProjectStatus.Undefined;
                                 break;
                         }
 
-                        project.InternalProjectCode = transactProject.your_processing_number;
+                        abstractProject.InternalProjectCode = transactProject.your_processing_number;
 
                         DateTime tempDT = DateTime.MinValue;
                         if (DateTime.TryParse(transactProject.date_ordered, out tempDT))
                         {
-                            project.DateOrdered = tempDT;
+                            abstractProject.DateOrdered = tempDT;
                         }
                         else
                         {
-                            project.DateOrdered = DateTime.Now;
+                            abstractProject.DateOrdered = DateTime.Now;
                         }
 
                         if (DateTime.TryParse(transactProject.date_confirmed, out tempDT))
                         {
-                            project.DateApproved = tempDT;
+                            abstractProject.DateApproved = tempDT;
                         }
                         else
                         {
-                            project.DateApproved = DateTime.Now;
+                            abstractProject.DateApproved = DateTime.Now;
                         }
 
                         if (DateTime.TryParse(transactProject.date_delivery, out tempDT))
                         {
-                            project.Deadline = tempDT;
+                            abstractProject.Deadline = tempDT;
                         }
                         else
                         {
-                            project.Deadline = DateTime.Now;
+                            abstractProject.Deadline = DateTime.Now;
                             Log.AddLog("Deadline could not be parsed.", ErrorLevels.Error);
                         }
 
-                        project.ExternalProjectManagerName = transactProject.project_coordinator;
-                        project.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
-                        project.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
-                        project.EndCustomer = transactProject.end_customer;
-                        project.SpecialityID = MappingManager.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
-                        project.SourceLanguageID = MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
-                        project.TargetLanguageIDs.Add(MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target));
+                        abstractProject.ExternalProjectManagerName = transactProject.project_coordinator;
+                        abstractProject.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
+                        abstractProject.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
+                        abstractProject.EndCustomer = transactProject.end_customer;
+                        abstractProject.SpecialityID = MappingManager.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
+                        abstractProject.SourceLanguageID = MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
+                        abstractProject.TargetLanguageIDs.Add(MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target));
 
-                        project.Workflow = "";
+                        abstractProject.Workflow = "";
                         foreach (string to_do_item in transactProject.to_do)
                         {
-                            if (project.Workflow == "")
+                            if (abstractProject.Workflow == "")
                             {
-                                project.Workflow += to_do_item;
+                                abstractProject.Workflow += to_do_item;
                             }
                             else
                             {
-                                project.Workflow += "¤" + to_do_item;
+                                abstractProject.Workflow += "¤" + to_do_item;
                             }
                         }
 
-                        project.CATTool = transactProject.system;
+                        abstractProject.CATTool = transactProject.system;
 
                         Regex analysisLineMatcher = new Regex(@"^\s*(?<category>[\p{L}\d\s%-]+):\s*(?<wordcount>[\d,\.]+)\s*Words at\s*(?<weight>[\d\.]+)%;\s*$");
 
@@ -160,7 +160,7 @@ namespace BeLazy
                                         break;
                                 }
 
-                                project.AnalysisCategories.Add(wcai);
+                                abstractProject.AnalysisCategories.Add(wcai);
                             }
 
                         }
@@ -170,36 +170,36 @@ namespace BeLazy
 
                         if (double.TryParse(transactProject.quantity, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out payableVolume))
                         {
-                            project.PayableVolume = payableVolume;
+                            abstractProject.PayableVolume = payableVolume;
                         }
                         else
                         {
-                            project.PayableVolume = 0;
+                            abstractProject.PayableVolume = 0;
                         }
 
                         if (double.TryParse(transactProject.price_unit, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out priceUnit))
                         {
-                            project.PriceUnit = priceUnit;
+                            abstractProject.PriceUnit = priceUnit;
                         }
                         else
                         {
-                            project.PriceUnit = 0;
+                            abstractProject.PriceUnit = 0;
                         }
 
                         if (double.TryParse(transactProject.prize_total, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out priceTotal))
                         {
-                            project.PriceTotal = priceTotal;
+                            abstractProject.PriceTotal = priceTotal;
                         }
                         else
                         {
-                            project.PriceTotal = 0;
+                            abstractProject.PriceTotal = 0;
                         }
 
-                        project.PayableUnitID = MappingManager.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
-                        project.VendorNotes = transactProject.instructions;
-                        project.PMNotes = transactProject.customer_check_criteria;
-                        project.ClientNotes = transactProject.feedback_deliveries[0].link_download;
-                        projects.Add(project);
+                        abstractProject.PayableUnitID = MappingManager.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
+                        abstractProject.VendorNotes = transactProject.instructions;
+                        abstractProject.PMNotes = transactProject.customer_check_criteria;
+                        if(transactProject.feedback_deliveries.Count > 0) abstractProject.ClientNotes = transactProject.feedback_deliveries[0].link_download;
+                        projects.Add(abstractProject);
                     }
                 }
                 catch (Exception ex)

@@ -13,9 +13,9 @@ namespace BeLazy
 
         static HttpClient client = new HttpClient();
         private Link link;
-        private Project[] projects;
+        private AbstractProject[] projects;
 
-        public XTRFUploadInterface(Link link, Project[] projects)
+        public XTRFUploadInterface(Link link, AbstractProject[] projects)
         {
             this.link = link;
             this.projects = projects;
@@ -32,15 +32,15 @@ namespace BeLazy
         {
             string clientID = link.ClientIDForUplinkProject;
 
-            foreach (Project project in projects)
+            foreach (AbstractProject abstractProject in projects)
             {
                 try
                 {
                     XTRF_CreateProjectRequest xcprequest = new XTRF_CreateProjectRequest()
                     {
                         clientId = Int32.Parse(clientID),
-                        name = MappingManager.GetScriptedValue(link, MapType.ProjectName, project),
-                        serviceId = Convert.ToInt32(MappingManager.DoMappingToUplinkCustomValues(MapType.Workflow, link, MappingManager.GetScriptedValue(link, MapType.Workflow, project)))
+                        name = MappingManager.GetScriptedValue(link, MapType.ProjectName, abstractProject),
+                        serviceId = Convert.ToInt32(MappingManager.DoMappingToUplinkCustomValues(MapType.Workflow, link, MappingManager.GetScriptedValue(link, MapType.Workflow, abstractProject)))
                     };
 
                     HttpResponseMessage response = await client.PostAsJsonAsync("v2/projects", xcprequest);
@@ -51,12 +51,12 @@ namespace BeLazy
 
                     XTRF_SetSourceLanguage xssl = new XTRF_SetSourceLanguage()
                     {
-                        sourceLanguageId = Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemID, project.SourceLanguageID.ToString()))
+                        sourceLanguageId = Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemID, abstractProject.SourceLanguageID.ToString()))
                     };
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/sourceLanguage", xssl);
 
                     XTRF_SetTargetLanguage xstl = new XTRF_SetTargetLanguage();
-                    foreach(int languageID in project.TargetLanguageIDs)
+                    foreach(int languageID in abstractProject.TargetLanguageIDs)
                     {
                         xstl.targetLanguageIds.Add(Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemID, languageID.ToString())));
                     }
@@ -64,42 +64,42 @@ namespace BeLazy
 
                     XTRF_SetSpecialization xsspec = new XTRF_SetSpecialization()
                     {
-                        specializationId = Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Speciality, link.UplinkBTMSSystemID, project.SpecialityID.ToString()))
+                        specializationId = Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Speciality, link.UplinkBTMSSystemID, abstractProject.SpecialityID.ToString()))
                     };
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/specialization", xsspec);
 
                     XTRF_SetClientContact xscc = new XTRF_SetClientContact();
-                    xscc.primaryId = Convert.ToInt32(MappingManager.DoMappingToUplinkCustomValues(MapType.Contact, link, project.ExternalProjectManagerName));
+                    xscc.primaryId = Convert.ToInt32(MappingManager.DoMappingToUplinkCustomValues(MapType.Contact, link, abstractProject.ExternalProjectManagerName));
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/clientContacts", xscc);
 
                     XTRF_SetValue xsv = new XTRF_SetValue();
                     
-                    DateTimeOffset dto = new DateTimeOffset(project.Deadline);
+                    DateTimeOffset dto = new DateTimeOffset(abstractProject.Deadline);
                     xsv.value = dto.ToUnixTimeMilliseconds().ToString();
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/clientDeadline", xsv);
 
-                    dto = new DateTimeOffset(project.DateOrdered);
+                    dto = new DateTimeOffset(abstractProject.DateOrdered);
                     xsv.value = dto.ToUnixTimeMilliseconds().ToString();
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/orderDate", xsv);
 
-                    xsv.value = project.ClientNotes;
+                    xsv.value = abstractProject.ClientNotes;
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/clientNotes", xsv);
 
-                    xsv.value = project.ExternalProjectCode;
+                    xsv.value = abstractProject.ExternalProjectCode;
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/clientReferenceNumber", xsv);
 
-                    xsv.value = project.PMNotes;
+                    xsv.value = abstractProject.PMNotes;
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/internalNotes", xsv);
 
-                    xsv.value = project.VendorNotes;
+                    xsv.value = abstractProject.VendorNotes;
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/vendorInstructions", xsv);
 
-                    xsv.value = project.PayableVolume.ToString();
+                    xsv.value = abstractProject.PayableVolume.ToString();
                     response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/volume", xsv);
 
                     xsv.value = "";
 
-                    foreach (var analysisCategory in project.AnalysisCategories)
+                    foreach (var analysisCategory in abstractProject.AnalysisCategories)
                     {
                         if (xsv.value != "") xsv.value += "¤";
                         xsv.value += ((analysisCategory.StartPc == -1) ? "Rep":("F" + analysisCategory.StartPc)) + ";" 

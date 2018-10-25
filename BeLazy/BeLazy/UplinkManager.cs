@@ -13,7 +13,7 @@ namespace BeLazy
             this.link = link;
         }
 
-        internal async Task<bool> GenerateUplinkProjectAsync(Project[] projects)
+        internal async Task<bool> GenerateUplinkProjectAsync(AbstractProject[] projects)
         {
             bool result = false;
             switch (link.UplinkBTMSSystemName)

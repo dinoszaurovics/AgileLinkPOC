@@ -7,7 +7,7 @@ namespace BeLazy
 {
     internal static class ScriptingHelper
     {   
-        internal static string EvalutaScriptResult(string script, Project project)
+        internal static string EvalutaScriptResult(string script, AbstractProject project)
         {
 
             Regex placeholderMatcher = new Regex(@"(?<!\\)@[\p{L}\d]+?(?<!\\)@");

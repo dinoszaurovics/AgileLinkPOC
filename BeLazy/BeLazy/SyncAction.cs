@@ -38,7 +38,7 @@ namespace BeLazy
 
         private async Task<bool> ProjectTransferAsync(DownlinkManager dlm, UplinkManager ulm)
         {
-            Project[] projects = await dlm.GenerateAbstractProjectAsync();
+            AbstractProject[] projects = await dlm.GenerateAbstractProjectAsync();
             if (projects.Length != 0)
             {
                 StatsHelper.AddProjectStats(projects, link);

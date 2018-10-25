@@ -12,9 +12,9 @@ namespace BeLazy
             this.link = link;
         }
 
-        internal async Task<Project[]> GenerateAbstractProjectAsync()
+        internal async Task<AbstractProject[]> GenerateAbstractProjectAsync()
         {
-            Project[] projects;
+            AbstractProject[] projects;
             
             switch (link.DownlinkBTMSSystemName)
             {
