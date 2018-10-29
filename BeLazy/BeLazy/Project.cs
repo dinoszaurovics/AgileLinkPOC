@@ -62,7 +62,7 @@ namespace BeLazy
 
     public enum ProjectStatus
     {
-        Initiated, New, InProgress, Finished, Closed, Undefined
+        Initiated, New, InProgress, QAinProgress, Completed, Closed, Cancelled, Undefined
     }
 
     public class WordCountAnalysisItem

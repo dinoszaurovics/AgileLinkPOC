@@ -32,7 +32,7 @@ namespace BeLazy
 
         }
 
-        internal static object DoMappingToUplinkGeneral(MapType mapType, int TMSSystemID, string itemName)
+        internal static int DoMappingToUplinkGeneral(MapType mapType, int TMSSystemID, string itemName)
         {
             string idToReturn, table, searchField;
             switch (mapType)
@@ -73,7 +73,7 @@ namespace BeLazy
             string result = DatabaseInterface.GetMappingToUplinkValue(mapType, link, projectValue);
             if(String.IsNullOrEmpty(result))
             {
-                // Do something to register new value
+                throw new Exception("Mapped value is empty: " + mapType + " - " + projectValue);
             }
             return result;
         }

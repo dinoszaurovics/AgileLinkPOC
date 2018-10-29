@@ -49,28 +49,55 @@ namespace BeLazy
                 {
                     // This is test line to filter for a single project
 
-                    if (transactProject.number == "TLR0148500/50/1")
+                    //if (transactProject.number == "TLR0148500/50/1")
+                    //{
+
+                    AbstractProject abstractProject = new AbstractProject();
+
+                    if (!String.IsNullOrEmpty(transactProject.number))
                     {
-
-                        AbstractProject abstractProject = new AbstractProject();
-
                         abstractProject.ExternalProjectCode = transactProject.number;
+                    }
+
+                    if (!String.IsNullOrEmpty(transactProject.status))
+                    {
                         switch (transactProject.status)
                         {
+                            
+                            case "Not confirmed":
+                                abstractProject.Status = ProjectStatus.New;
+                                break;
                             case "Confirmed":
                                 abstractProject.Status = ProjectStatus.InProgress;
                                 break;
-                            case "Not confirmed":
-                                abstractProject.Status = ProjectStatus.New;
+                            case "Quality check started":
+                                abstractProject.Status = ProjectStatus.QAinProgress;
+                                break;
+                            case "Invoiceable":
+                                abstractProject.Status = ProjectStatus.Completed;
+                                break;
+                            case "Invoiced":
+                                abstractProject.Status = ProjectStatus.Closed;
+                                break;
+                            case "Cancelled":
+                                abstractProject.Status = ProjectStatus.Cancelled;
                                 break;
                             default:
                                 abstractProject.Status = ProjectStatus.Undefined;
                                 break;
                         }
+                    }
 
-                        abstractProject.InternalProjectCode = transactProject.your_processing_number;
+
+                    if (abstractProject.Status == ProjectStatus.InProgress)
+                    {
+                        if (!String.IsNullOrEmpty(transactProject.your_processing_number))
+                        {
+                            abstractProject.InternalProjectCode = transactProject.your_processing_number;
+                        }
 
                         DateTime tempDT = DateTime.MinValue;
+
                         if (DateTime.TryParse(transactProject.date_ordered, out tempDT))
                         {
                             abstractProject.DateOrdered = tempDT;
@@ -99,13 +126,61 @@ namespace BeLazy
                             Log.AddLog("Deadline could not be parsed.", ErrorLevels.Error);
                         }
 
-                        abstractProject.ExternalProjectManagerName = transactProject.project_coordinator;
-                        abstractProject.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
-                        abstractProject.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
-                        abstractProject.EndCustomer = transactProject.end_customer;
-                        abstractProject.SpecialityID = MappingManager.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
-                        abstractProject.SourceLanguageID = MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
-                        abstractProject.TargetLanguageIDs.Add(MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target));
+                        if (!String.IsNullOrEmpty(transactProject.project_coordinator))
+                        {
+                            abstractProject.ExternalProjectManagerName = transactProject.project_coordinator;
+                        }
+
+                        if (!String.IsNullOrEmpty(transactProject.project_coordinator_mail))
+                        {
+                            abstractProject.ExternalProjectManagerEmail = transactProject.project_coordinator_mail;
+                        }
+
+                        if (!String.IsNullOrEmpty(transactProject.project_coordinator_phone))
+                        {
+                            abstractProject.ExternalProjectManagerPhone = transactProject.project_coordinator_phone;
+                        }
+
+                        if (!String.IsNullOrEmpty(transactProject.end_customer))
+                        {
+                            abstractProject.EndCustomer = transactProject.end_customer;
+                        }
+
+                        if (!String.IsNullOrEmpty(transactProject.specialty))
+                        {
+                            try
+                            {
+                                abstractProject.SpecialityID = MappingManager.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.AddLog("Transact speciality not mapped: " + transactProject.specialty + " - " + ex.Message, ErrorLevels.Warning);
+                            }
+                        }
+
+                        if (!String.IsNullOrEmpty(transactProject.language_source))
+                        {
+                            try
+                            {
+                                abstractProject.SourceLanguageID = MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.AddLog("Transact source language not mapped: " + transactProject.language_source + " - " + ex.Message, ErrorLevels.Warning);
+                            }
+                        }
+
+                        if (!String.IsNullOrEmpty(transactProject.language_target))
+                        {
+                            try
+                            {
+                                abstractProject.TargetLanguageIDs.Add(MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target));
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.AddLog("Transact target language not mapped: " + transactProject.language_target + " - " + ex.Message, ErrorLevels.Warning);
+                            }
+                        }
 
                         abstractProject.Workflow = "";
                         foreach (string to_do_item in transactProject.to_do)
@@ -120,7 +195,10 @@ namespace BeLazy
                             }
                         }
 
-                        abstractProject.CATTool = transactProject.system;
+                        if (!String.IsNullOrEmpty(transactProject.system))
+                        {
+                            abstractProject.CATTool = transactProject.system;
+                        }
 
                         Regex analysisLineMatcher = new Regex(@"^\s*(?<category>[\p{L}\d\s%-]+):\s*(?<wordcount>[\d,\.]+)\s*Words at\s*(?<weight>[\d\.]+)%;\s*$");
 
@@ -164,7 +242,7 @@ namespace BeLazy
                             }
 
                         }
-                    
+
 
                         double payableVolume = 0.0, priceTotal = 0.0, priceUnit = 0.0;
 
@@ -195,10 +273,33 @@ namespace BeLazy
                             abstractProject.PriceTotal = 0;
                         }
 
-                        abstractProject.PayableUnitID = MappingManager.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
-                        abstractProject.VendorNotes = transactProject.instructions;
-                        abstractProject.PMNotes = transactProject.customer_check_criteria;
-                        if(transactProject.feedback_deliveries.Count > 0) abstractProject.ClientNotes = transactProject.feedback_deliveries[0].link_download;
+                        if (!String.IsNullOrEmpty(transactProject.quantity_unit))
+                        {
+                            try
+                            {
+                                abstractProject.PayableUnitID = MappingManager.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.AddLog("Transact unit not mapped: " + transactProject.quantity_unit + " - " + ex.Message, ErrorLevels.Warning);
+                            }
+                        }
+
+                        if (!String.IsNullOrEmpty(transactProject.instructions))
+                        {
+                            abstractProject.VendorNotes = transactProject.instructions;
+                        }
+
+                        if (!String.IsNullOrEmpty(transactProject.customer_check_criteria))
+                        {
+                            abstractProject.PMNotes = transactProject.customer_check_criteria;
+                        }
+
+                        if (transactProject.feedback_deliveries.Count > 0 && !String.IsNullOrEmpty(transactProject.feedback_deliveries[0].link_download))
+                        {
+                            abstractProject.ClientNotes = transactProject.feedback_deliveries[0].link_download;
+                        }
+
                         projects.Add(abstractProject);
                     }
                 }

@@ -52,9 +52,12 @@
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="DatabaseInterface.cs" />
     <Compile Include="DownlinkManager.cs" />
+    <Compile Include="DownlinkOnboarding.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MappingManager.cs" />
+    <Compile Include="OnboardingCheck.cs" />
+    <Compile Include="OnboardingManager.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />
@@ -64,8 +67,11 @@
     <Compile Include="SyncAction.cs" />
     <Compile Include="SyncLinkProcessor.cs" />
     <Compile Include="TransactDownloadInterface.cs" />
+    <Compile Include="TransactDownloadOnboarding.cs" />
     <Compile Include="UplinkManager.cs" />
+    <Compile Include="UplinkOnboarding.cs" />
     <Compile Include="XTRFUploadInterface.cs" />
+    <Compile Include="XTRFUploadOnboarding.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

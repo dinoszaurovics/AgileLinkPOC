@@ -13,13 +13,13 @@ namespace BeLazy
             this.link = link;
         }
 
-        internal async Task<bool> GenerateUplinkProjectAsync(AbstractProject[] projects)
+        internal async Task<bool> GenerateUplinkProjectAsync(AbstractProject[] abstractProjects)
         {
             bool result = false;
             switch (link.UplinkBTMSSystemName)
             {
                 case "XTRF":
-                    XTRFUploadInterface tdi = new XTRFUploadInterface(link, projects);
+                    XTRFUploadInterface tdi = new XTRFUploadInterface(link, abstractProjects);
                     result = await tdi.UploadProjects();
                     break;
                 default:

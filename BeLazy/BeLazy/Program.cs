@@ -15,12 +15,22 @@ namespace BeLazy
             try
             {
                 Options.Initialize();
-
-                SyncLinkProcessor slp = new SyncLinkProcessor();
-                Log.AddLog("Thread returned to Main", ErrorLevels.Information);
-                slp.ManageSyncTasks();
-                Log.AddLog("Running finished", ErrorLevels.Information);
-
+                if (args.Length > 0)
+                {
+                    Log.AddLog("Onboarding check starting", ErrorLevels.Information);
+                    OnboardingManager om = new OnboardingManager();
+                    Log.AddLog("Thread returned to Main", ErrorLevels.Information);
+                    om.ManageOBTasks();
+                    Log.AddLog("Running finished", ErrorLevels.Information);
+                }
+                else
+                {
+                    Log.AddLog("Data transfer started", ErrorLevels.Information);
+                    SyncLinkProcessor slp = new SyncLinkProcessor();
+                    Log.AddLog("Thread returned to Main", ErrorLevels.Information);
+                    slp.ManageSyncTasks();
+                    Log.AddLog("Running finished", ErrorLevels.Information);
+                }
                 Console.ReadKey();
             }
             catch (Exception ex)

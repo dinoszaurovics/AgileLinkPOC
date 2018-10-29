@@ -14,20 +14,20 @@ namespace BeLazy
 
         internal async Task<AbstractProject[]> GenerateAbstractProjectAsync()
         {
-            AbstractProject[] projects;
+            AbstractProject[] abstractProjects;
             
             switch (link.DownlinkBTMSSystemName)
             {
                 case "Transact":
                     TransactDownloadInterface tdi = new TransactDownloadInterface(link);
-                    projects = await tdi.GetProjectsAsync();
+                    abstractProjects = await tdi.GetProjectsAsync();
                     break;
                 default:
-                    projects = null;
+                    abstractProjects = null;
                     break;
             }
             
-            return projects;
+            return abstractProjects;
         }
     }
 }
