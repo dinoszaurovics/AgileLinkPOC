@@ -4,7 +4,7 @@ namespace BeLazy
 {
     internal class MappingManager
     {
-        internal static int DoMappingToAbstract(MapType mapType, int TMSSystemID, string itemName)
+        internal static int DoMappingToAbstract(MapType mapType, int TMSSystemTypeID, string itemName)
         {
             string idToReturn, table, searchField;
             switch (mapType)
@@ -28,11 +28,11 @@ namespace BeLazy
                     throw new Exception("Unknown MapType.");
             }
 
-            return DatabaseInterface.GetMappingForGeneralValues(idToReturn, table, TMSSystemID, searchField, itemName);
+            return DatabaseInterface.GetMappingForGeneralValues(idToReturn, table, TMSSystemTypeID, searchField, itemName);
 
         }
 
-        internal static int DoMappingToUplinkGeneral(MapType mapType, int TMSSystemID, string itemName)
+        internal static int DoMappingToUplinkGeneral(MapType mapType, int TMSSystemTypeID, string itemName)
         {
             string idToReturn, table, searchField;
             switch (mapType)
@@ -56,7 +56,7 @@ namespace BeLazy
                     throw new Exception("Unknown MapType.");
             }
 
-            return DatabaseInterface.GetMappingForGeneralValues(idToReturn, table, TMSSystemID, searchField, itemName);
+            return DatabaseInterface.GetMappingForGeneralValues(idToReturn, table, TMSSystemTypeID, searchField, itemName);
 
         }
 

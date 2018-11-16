@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeLazy", "BeLazy\BeLazy.csproj", "{B9E22DAF-468B-4645-9656-FD1480352CC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeLazySite", "BeLazySite\BeLazySite\BeLazySite.csproj", "{3B6748FD-1D38-4725-9727-C2E6C96A00FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B9E22DAF-468B-4645-9656-FD1480352CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9E22DAF-468B-4645-9656-FD1480352CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9E22DAF-468B-4645-9656-FD1480352CC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B6748FD-1D38-4725-9727-C2E6C96A00FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B6748FD-1D38-4725-9727-C2E6C96A00FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B6748FD-1D38-4725-9727-C2E6C96A00FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B6748FD-1D38-4725-9727-C2E6C96A00FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

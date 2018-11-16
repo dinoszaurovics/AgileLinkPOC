@@ -16,8 +16,9 @@ namespace BeLazy
 
         private List<string> unmappedLanguages = new List<string>();
         private List<string> unmappedSpecialities = new List<string>();
-        private List<string> unmappedUnits= new List<string>();
+        private List<string> unmappedUnits = new List<string>();
         private List<string> unmappedStatuses = new List<string>();
+        internal bool obSuccess = false;
 
         public TransactDownloadOnboarding(Link link)
         {
@@ -44,11 +45,20 @@ namespace BeLazy
 
         private void GenerateOutput()
         {
-            Log.AddLog("Unmapped Transact downlink values...", ErrorLevels.Warning);
-            UnmappedReportWriter(unmappedStatuses, "status");
-            UnmappedReportWriter(unmappedLanguages, "language");
-            UnmappedReportWriter(unmappedUnits, "unit");
-            UnmappedReportWriter(unmappedSpecialities, "speciality");
+            if (unmappedStatuses.Count > 0 || unmappedLanguages.Count > 0 || unmappedUnits.Count > 0 || unmappedSpecialities.Count > 0)
+            {
+                Log.AddLog("Unmapped Transact downlink values...", ErrorLevels.Warning);
+                UnmappedReportWriter(unmappedStatuses, "status");
+                UnmappedReportWriter(unmappedLanguages, "language");
+                UnmappedReportWriter(unmappedUnits, "unit");
+                UnmappedReportWriter(unmappedSpecialities, "speciality");
+                obSuccess = true;
+            }
+            else
+            {
+                obSuccess = true;
+            }
+
         }
 
         private void UnmappedReportWriter(List<string> unmappedValues, string valueName)
@@ -110,6 +120,12 @@ namespace BeLazy
                             case "Cancelled":
                                 abstractProject.Status = ProjectStatus.Cancelled;
                                 break;
+                            case "Denied bill acceptance":
+                                abstractProject.Status = ProjectStatus.Completed;
+                                break;
+                            case "Completeness check started":
+                                abstractProject.Status = ProjectStatus.Completed;
+                                break;
                             default:
                                 abstractProject.Status = ProjectStatus.Undefined;
                                 break;
@@ -118,7 +134,7 @@ namespace BeLazy
 
                     if (abstractProject.Status == ProjectStatus.Undefined)
                     {
-                        if(!unmappedStatuses.Contains(transactProject.status)) unmappedStatuses.Add(transactProject.status);
+                        if (!unmappedStatuses.Contains(transactProject.status)) unmappedStatuses.Add(transactProject.status);
                     }
 
                     if (!String.IsNullOrEmpty(transactProject.your_processing_number))
@@ -180,7 +196,7 @@ namespace BeLazy
                     {
                         try
                         {
-                            abstractProject.SpecialityID = MappingManager.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemID, transactProject.specialty);
+                            abstractProject.SpecialityID = MappingManager.DoMappingToAbstract(MapType.Speciality, link.DownlinkBTMSSystemTypeID, transactProject.specialty);
                         }
                         catch (Exception ex)
                         {
@@ -192,7 +208,7 @@ namespace BeLazy
                     {
                         try
                         {
-                            abstractProject.SourceLanguageID = MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_source);
+                            abstractProject.SourceLanguageID = MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemTypeID, transactProject.language_source);
                         }
                         catch (Exception ex)
                         {
@@ -204,7 +220,7 @@ namespace BeLazy
                     {
                         try
                         {
-                            abstractProject.TargetLanguageIDs.Add(MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemID, transactProject.language_target));
+                            abstractProject.TargetLanguageIDs.Add(MappingManager.DoMappingToAbstract(MapType.Language, link.DownlinkBTMSSystemTypeID, transactProject.language_target));
                         }
                         catch (Exception ex)
                         {
@@ -307,7 +323,7 @@ namespace BeLazy
                     {
                         try
                         {
-                            abstractProject.PayableUnitID = MappingManager.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemID, transactProject.quantity_unit);
+                            abstractProject.PayableUnitID = MappingManager.DoMappingToAbstract(MapType.Unit, link.DownlinkBTMSSystemTypeID, transactProject.quantity_unit);
                         }
                         catch (Exception ex)
                         {

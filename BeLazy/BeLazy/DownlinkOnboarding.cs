@@ -6,6 +6,7 @@ namespace BeLazy
 {
     internal class DownlinkOnboarding
     {
+        internal bool obSuccess;
         private Link link;
 
         public DownlinkOnboarding(Link link)
@@ -21,6 +22,7 @@ namespace BeLazy
                 case "Transact":
                     TransactDownloadOnboarding tdob = new TransactDownloadOnboarding(link);
                     abstractProjects = await tdob.GenerateReport();
+                    obSuccess = tdob.obSuccess;
                     break;
                 default:
                     abstractProjects = null;

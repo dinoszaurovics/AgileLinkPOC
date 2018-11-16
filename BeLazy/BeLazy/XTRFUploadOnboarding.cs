@@ -14,6 +14,7 @@ namespace BeLazy
     internal class XTRFUploadOnboarding
     {
         private static HttpClient client = new HttpClient();
+        internal bool obSuccess = false;
         private Link link;
         private AbstractProject[] projects;
         List<string> unmappedWorkflows = new List<string>();
@@ -91,7 +92,7 @@ namespace BeLazy
             {
                 try
                 {
-                    string value = MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemID, langItem).ToString();
+                    string value = MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemTypeID, langItem).ToString();
                     if (!checkXTRFValuesLanguages.ContainsKey(value)) checkXTRFValuesLanguages.Add(value, langItem);
                 }
                 catch (Exception ex)
@@ -104,7 +105,7 @@ namespace BeLazy
             {
                 try
                 {
-                    string value = MappingManager.DoMappingToUplinkGeneral(MapType.Speciality, link.UplinkBTMSSystemID, spItem).ToString();
+                    string value = MappingManager.DoMappingToUplinkGeneral(MapType.Speciality, link.UplinkBTMSSystemTypeID, spItem).ToString();
                     if (!checkXTRFValuesSpecialities.ContainsKey(value)) checkXTRFValuesSpecialities.Add(value, spItem);
                 }
                 catch (Exception ex)
@@ -226,11 +227,19 @@ namespace BeLazy
 
         private void GenerateOutput()
         {
-            Log.AddLog("Unmapped XTRF uplink values...", ErrorLevels.Warning);
-            UnmappedReportWriter(unmappedWorkflows, "service");
-            UnmappedReportWriter(unmappedLanguages, "language");
-            UnmappedReportWriter(unmappedPMs, "client PM");
-            UnmappedReportWriter(unmappedSpecialities, "speciality");
+            if (unmappedWorkflows.Count > 0 || unmappedLanguages.Count > 0 || unmappedPMs.Count > 0 || unmappedSpecialities.Count > 0)
+            {
+                Log.AddLog("Unmapped XTRF uplink values...", ErrorLevels.Warning);
+                UnmappedReportWriter(unmappedWorkflows, "service");
+                UnmappedReportWriter(unmappedLanguages, "language");
+                UnmappedReportWriter(unmappedPMs, "client PM");
+                UnmappedReportWriter(unmappedSpecialities, "speciality");
+                obSuccess = false;
+            }
+            else
+            {
+                obSuccess = true;
+            }
         }
 
         private void UnmappedReportWriter(List<string> unmappedValues, string valueName)

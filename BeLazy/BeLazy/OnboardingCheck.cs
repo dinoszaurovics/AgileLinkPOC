@@ -27,7 +27,7 @@ namespace BeLazy
                 AbstractProject[] abstractProjects = await dlob.GetOnboardingReport();
                 await ulob.GetOnboardingReport(abstractProjects);
 
-                obSuccess = true;
+                obSuccess = dlob.obSuccess && ulob.obSuccess;
                 obFinished = DateTime.Now;
                 return true;
             }

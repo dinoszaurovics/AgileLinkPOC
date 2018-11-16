@@ -7,11 +7,17 @@
 
         public int UplinkUserID { get; set; }
         public int DownlinkUserID { get; set; }
+
         public int UplinkBTMSSystemID { get; set; }
         public int UplinkCTMSSystemID { get; set; }
+        public int UplinkBTMSSystemTypeID { get; set; }
+        public int UplinkCTMSSystemTypeID { get; set; }
+
         public int DownlinkBTMSSystemID { get; set; }
         public int DownlinkCTMSSystemID { get; set; }
-
+        public int DownlinkBTMSSystemTypeID { get; set; }
+        public int DownlinkCTMSSystemTypeID { get; set; }
+        
         public string DownlinkCTMSPassword { get; set; }
         public string DownlinkCTMSURL { get; set; }
         public string DownlinkCTMSUsername { get; set; }

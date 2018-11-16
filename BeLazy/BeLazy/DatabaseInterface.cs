@@ -9,7 +9,7 @@ namespace BeLazy
         internal static List<int> GetLinksToSync()
         {
             List<int> result = new List<int>();
-            string SQLcommand = "SELECT * from tLinks";
+            string SQLcommand = "SELECT * from tLinks WHERE IsActive = 1";
             DataTable dt = DatabaseManager.ExecuteSQLSelect(SQLcommand);
             foreach (DataRow dr in dt.Rows)
             {
@@ -46,13 +46,18 @@ namespace BeLazy
             else
             {
                 DataRow dr = dt.Rows[0];
-            
+
                 link.UplinkUserID = GetIntValue(dr["uplinkUserID"].ToString());
                 link.DownlinkUserID = GetIntValue(dr["downlinkUserID"].ToString());
                 link.UplinkBTMSSystemID = GetIntValue(dr["UplinkBTMSSystemID"].ToString());
                 link.UplinkCTMSSystemID = GetIntValue(dr["UplinkCTMSSystemID"].ToString());
+                link.UplinkBTMSSystemTypeID = GetIntValue(dr["ubTMSSystemTypeID"].ToString());
+                link.UplinkCTMSSystemTypeID = GetIntValue(dr["ucTMSSystemTypeID"].ToString());
+
                 link.DownlinkBTMSSystemID = GetIntValue(dr["DownlinkBTMSSystemID"].ToString());
                 link.DownlinkCTMSSystemID = GetIntValue(dr["DownlinkCTMSSystemID"].ToString());
+                link.DownlinkBTMSSystemTypeID = GetIntValue(dr["dbTMSSystemTypeID"].ToString());
+                link.DownlinkCTMSSystemTypeID = GetIntValue(dr["dcTMSSystemTypeID"].ToString());
                 link.ClientIDForUplinkProject = dr["ClientIDForUplinkProject"].ToString();
 
                 link.DownlinkCTMSPassword = dr["dcPassword"].ToString();
@@ -137,15 +142,15 @@ namespace BeLazy
             }
         }
 
-        internal static int GetMappingForGeneralValues(string idToReturn, string table, int tMSSystemID, string searchField, string itemName)
+        internal static int GetMappingForGeneralValues(string idToReturn, string table, int tMSSystemTypeID, string searchField, string itemName)
         {
             string SQLcommand = String.Format("SELECT {0} FROM {1} WHERE TMSSystemTypeID = {2} AND {3} = '{4}' ",
-               idToReturn, table, tMSSystemID, searchField, itemName);
+               idToReturn, table, tMSSystemTypeID, searchField, itemName);
 
             DataTable dt = DatabaseManager.ExecuteSQLSelect(SQLcommand);
             if (dt.Rows.Count != 1)
             {
-                throw new Exception("Mapping value is not valid: " + tMSSystemID + " - " + searchField + " - " + itemName);
+                throw new Exception("Mapping value is not valid: " + tMSSystemTypeID + " - " + searchField + " - " + itemName);
             }
             else
             {
@@ -221,8 +226,8 @@ namespace BeLazy
                 ;
 
             int projectID = DatabaseManager.ExecuteSQLInsert(SQLcommand);
-            
-            foreach(int langID in project.TargetLanguageIDs)
+
+            foreach (int langID in project.TargetLanguageIDs)
             {
                 SQLcommand = "INSERT INTO tProjectTargetLanguages (ProjectID, LanguageID) VALUES (" +
                 projectID.ToString() + ", " +
@@ -252,6 +257,17 @@ namespace BeLazy
 
         }
 
+        internal static void SaveLogMessageToDatabase(string message, string errorLevel)
+        {
+            string SQLcommand = "INSERT INTO tLogMessages " +
+                    "(ErrorLevel, ErrorMessage)" +
+                    " VALUES (" +
+                    SQLEscape(errorLevel) + ", " +
+                    SQLEscape(message) +
+                    "); SELECT @@IDENTITY";
+            DatabaseManager.ExecuteSQLInsert(SQLcommand);
+        }
+
         private static string SqlDateTime(DateTime? value)
         {
             if (value != null)
@@ -265,7 +281,7 @@ namespace BeLazy
 
         private static string SQLEscape(string value)
         {
-            if(String.IsNullOrEmpty(value))
+            if (String.IsNullOrEmpty(value))
             {
                 return "null";
             }

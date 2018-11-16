@@ -5,6 +5,7 @@ namespace BeLazy
 {
     internal class UplinkOnboarding
     {
+        internal bool obSuccess;
         private Link link;
 
         public UplinkOnboarding(Link link)
@@ -19,6 +20,7 @@ namespace BeLazy
                 case "XTRF":
                     XTRFUploadOnboarding tdob = new XTRFUploadOnboarding(link, projects);
                     await tdob.GenerateReport();
+                    obSuccess = tdob.obSuccess;
                     break;
                 default:
                     break;

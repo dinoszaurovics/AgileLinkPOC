@@ -7,6 +7,7 @@ namespace BeLazy
         internal static void AddLog(string message, ErrorLevels errorLevel = ErrorLevels.Information)
         {
             Console.WriteLine(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " - " + errorLevel + " - " + message);
+            DatabaseInterface.SaveLogMessageToDatabase(message, errorLevel.ToString());
         }
     }
 

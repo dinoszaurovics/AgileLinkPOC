@@ -66,7 +66,7 @@ namespace BeLazy
                     {
                         XTRF_SetSourceLanguage xssl = new XTRF_SetSourceLanguage()
                         {
-                            sourceLanguageId = Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemID, abstractProject.SourceLanguageID.ToString()))
+                            sourceLanguageId = Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemTypeID, abstractProject.SourceLanguageID.ToString()))
                         };
                         response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/sourceLanguage", xssl);
                     }
@@ -82,7 +82,7 @@ namespace BeLazy
                         {
                             try
                             {
-                                xstl.targetLanguageIds.Add(Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemID, languageID.ToString())));
+                                xstl.targetLanguageIds.Add(Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Language, link.UplinkBTMSSystemTypeID, languageID.ToString())));
                             }
                             catch (Exception ex)
                             {
@@ -104,7 +104,7 @@ namespace BeLazy
                     {
                         XTRF_SetSpecialization xsspec = new XTRF_SetSpecialization()
                         {
-                            specializationId = Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Speciality, link.UplinkBTMSSystemID, abstractProject.SpecialityID.ToString()))
+                            specializationId = Convert.ToInt32(MappingManager.DoMappingToUplinkGeneral(MapType.Speciality, link.UplinkBTMSSystemTypeID, abstractProject.SpecialityID.ToString()))
                         };
                         response = await client.PutAsJsonAsync("v2/projects/" + newXTRFProjectID + "/specialization", xsspec);
                     }
