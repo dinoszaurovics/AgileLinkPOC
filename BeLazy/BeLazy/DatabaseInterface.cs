@@ -87,6 +87,20 @@ namespace BeLazy
             }
         }
 
+        internal static void ClearLog()
+        {
+            string SQLcommand = String.Format("DELETE FROM tLogMessages");
+            DatabaseManager.ExecuteSQLUpdate(SQLcommand);
+        }
+
+        internal static bool ProjectExists(string externalProjectCode, int linkID)
+        {
+           string SQLcommand = String.Format("SELECT * FROM tProject WHERE ExternalProjectCode = '{0}' AND LinkID = {1}", externalProjectCode, linkID);
+
+            DataTable dt = DatabaseManager.ExecuteSQLSelect(SQLcommand);
+            return dt.Rows.Count > 0;
+        }
+
         internal static Language GetLanguage(int languageID)
         {
             string SQLcommand = String.Format("SELECT FullName, ISO2, ISO3 FROM tLanguages WHERE LanguageID = {0}",

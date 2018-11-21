@@ -56,6 +56,7 @@ namespace BeLazy
             }
             else
             {
+                Log.AddLog("No unmapped Transact downlink values", ErrorLevels.Information);
                 obSuccess = true;
             }
 
@@ -71,16 +72,25 @@ namespace BeLazy
 
         internal async Task<List<AbstractProject>> GetTransactProjects(string method)
         {
-            TransactProjectRequest tpr = new TransactProjectRequest();
-            tpr.mode = "purchaseorder";
-            tpr.token = link.DownlinkBTMSPassword;
-            tpr.method = method;
-
-            HttpResponseMessage response = await client.PostAsJsonAsync("", tpr);
-            response.EnsureSuccessStatusCode();
-            TransactProjectList tp = await response.Content.ReadAsAsync<TransactProjectList>();
             List<AbstractProject> abstractProjects = new List<AbstractProject>();
-            MapProject(tp, ref abstractProjects);
+
+            try
+            {
+                TransactProjectRequest tpr = new TransactProjectRequest();
+                tpr.mode = "purchaseorder";
+                tpr.token = link.DownlinkBTMSPassword;
+                tpr.method = method;
+                
+                HttpResponseMessage response = await client.PostAsJsonAsync("", tpr);
+                response.EnsureSuccessStatusCode();
+                TransactProjectList tp = await response.Content.ReadAsAsync<TransactProjectList>();
+                MapProject(tp, ref abstractProjects);
+            }
+            catch (Exception ex)
+            {
+                Log.AddLog("Transact onboarding failed for " + method + " - " + ex.Message, ErrorLevels.Error);
+            }
+
             return abstractProjects;
         }
 

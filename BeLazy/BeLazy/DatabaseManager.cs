@@ -17,9 +17,14 @@ namespace BeLazy
             connString = ConfigurationManager.ConnectionStrings["DefaultConnection"];
             if (connString == null)
             {
-                return null;
+                connString = ConfigurationManager.ConnectionStrings["BeLazy_DBConnectionString"];
+                if (connString == null)
+                {
+                    return null;
+                }
             }
             return connString;
+
         }
 
         internal static void ExecuteSQLUpdate(string sqlCommand)

@@ -47,11 +47,6 @@ namespace BeLazy
             {
                 try
                 {
-                    // This is test line to filter for a single project
-
-                    //if (transactProject.number == "TLR0148500/50/1")
-                    //{
-
                     AbstractProject abstractProject = new AbstractProject();
 
                     if (!String.IsNullOrEmpty(transactProject.number))
@@ -94,8 +89,7 @@ namespace BeLazy
                         }
                     }
 
-
-                    if (abstractProject.Status == ProjectStatus.InProgress)
+                    if (abstractProject.Status == ProjectStatus.New && !DatabaseInterface.ProjectExists(abstractProject.ExternalProjectCode, link.linkID))
                     {
                         if (!String.IsNullOrEmpty(transactProject.your_processing_number))
                         {

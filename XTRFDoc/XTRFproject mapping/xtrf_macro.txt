@@ -12,17 +12,17 @@
         #set($CATQuantity = $utils.createInstance('com.radzisz.xtrf.model.charge.CATQuantity'))
         #if( "$!Wordcounts.Rep" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.Rep)) $CATQuantity.setRepetitions($wc) #end
         #if( "$!Wordcounts.F100" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F100)) $CATQuantity.setPercent100($wc) #end
-        #if( "$!Wordcounts.F95" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F95)) $CATQuantity.setPercent95_99($wc) #end
-        #if( "$!Wordcounts.F85" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F85)) $CATQuantity.setPercent85_94($wc) #end
-        #if( "$!Wordcounts.F75" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F75)) $CATQuantity.setPercent75_84($wc) #end
+        #if( "$!Wordcounts.F95" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F95)) $CATQuantity.setPercent95_99($wc) #elseif( "$!Wordcounts.F90" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F90)) $CATQuantity.setPercent95_99($wc) #end
+        #if( "$!Wordcounts.F85" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F85)) $CATQuantity.setPercent85_94($wc) #elseif( "$!Wordcounts.F80" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F80)) $CATQuantity.setPercent85_94($wc) #end
+        #if( "$!Wordcounts.F75" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F75)) $CATQuantity.setPercent75_84($wc) #elseif( "$!Wordcounts.F70" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F70)) $CATQuantity.setPercent75_84($wc) #end
         #if( "$!Wordcounts.F50" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F50)) $CATQuantity.setPercent50_74($wc) #end
         #if( "$!Wordcounts.F0" != "" ) #set($wc = $utils.createInstance('java.math.BigDecimal', $Wordcounts.F0)) $CATQuantity.setNoMatch($wc) #end
         #set($CATGrid = $utils.createInstance('com.radzisz.xtrf.model.CATGrid'))
         #if( "$!Weights.Rep" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.Rep)) $CATGrid.setRepetitions($we) #end
         #if( "$!Weights.F100" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F100)) $CATGrid.setPercent100($we) #end
-        #if( "$!Weights.F95" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F95)) $CATGrid.setPercent95_99($we) #end
-        #if( "$!Weights.F85" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F85)) $CATGrid.setPercent85_94($we) #end
-        #if( "$!Weights.F75" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F75)) $CATGrid.setPercent75_84($we) #end
+        #if( "$!Weights.F95" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F95)) $CATGrid.setPercent95_99($we) #elseif( "$!Weights.F90" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F90)) $CATGrid.setPercent95_99($we) #end
+        #if( "$!Weights.F85" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F85)) $CATGrid.setPercent85_94($we) #elseif( "$!Weights.F80" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F80)) $CATGrid.setPercent85_94($we) #end
+        #if( "$!Weights.F75" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F75)) $CATGrid.setPercent75_84($we) #elseif( "$!Weights.F70" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F70)) $CATGrid.setPercent75_84($we) #end
         #if( "$!Weights.F50" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F50)) $CATGrid.setPercent50_74($we) #end
         #if( "$!Weights.F0" != "" ) #set($we = $utils.createInstance('java.math.BigDecimal', $Weights.F0)) $CATGrid.setNoMatch($we) #end
 

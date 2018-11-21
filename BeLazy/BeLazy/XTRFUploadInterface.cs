@@ -32,6 +32,7 @@ namespace BeLazy
         {
             string clientID = link.ClientIDForUplinkProject;
 
+            //AbstractProject abstractProject = projects[1];   // Test line
             foreach (AbstractProject abstractProject in projects)
             {
                 Log.AddLog("Adding project to XTRF: " + abstractProject.ExternalProjectCode, ErrorLevels.Information);
@@ -218,7 +219,25 @@ namespace BeLazy
                             throw new Exception("XTRF project custom field cannot be set. " + ex.Message);
                         }
 
-                        response = await client.GetAsync("browser?viewId=58&q.idNumber=" + newXTRFProjectIDCode);  // This view ID (58) is custom, system specific
+                        // Hard coded IDs for PoC purposes
+                        int viewID = 0, macroID = 0;
+                        switch (link.linkID)
+                        {
+                            case 1:
+                                viewID = 62;
+                                macroID = 4;
+                                break;
+                            case 2:
+                                viewID = 62;
+                                macroID = 9;
+                                break;
+                            default:
+                                break;
+                        }
+                        // End of hard coded values
+
+
+                        response = await client.GetAsync("browser?viewId=" + viewID + "&q.idNumber=" + newXTRFProjectIDCode);  
                         response.EnsureSuccessStatusCode();
                         string projectList = await response.Content.ReadAsStringAsync();
                         Regex internalProjectIDMatcher = new Regex(@"(?<=\s*""rows""\s*:\s*{\s*""\d+""\s*:\s*{\s*""id""\s*:\s*)(\d+)(?=,)");
@@ -227,7 +246,7 @@ namespace BeLazy
                             int internalProjectID = Convert.ToInt32(internalProjectIDMatcher.Match(projectList).Value);
                             XTRF_RunMacro xrm = new XTRF_RunMacro();
                             xrm.ids.Add(internalProjectID);
-                            response = await client.PostAsJsonAsync("macros/4/run", xrm);  // This macro ID (4) is custom, system specific
+                            response = await client.PostAsJsonAsync("macros/" + macroID + "/run", xrm);  
                             string akarmi = await response.Content.ReadAsStringAsync();
                         }
                     }

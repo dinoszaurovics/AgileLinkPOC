@@ -70,6 +70,8 @@ namespace BeLazy
                 }
             }
 
+            Log.AddLog("XTRF uplink onboarding succesfully processed abstract projects", ErrorLevels.Information);
+
             Dictionary<string, string> checkXTRFValuesWorkflows = new Dictionary<string, string>();
             Dictionary<string, string> checkXTRFValuesLanguages = new Dictionary<string, string>();
             Dictionary<string, string> checkXTRFValuesPMs = new Dictionary<string, string>();
@@ -127,11 +129,9 @@ namespace BeLazy
                 }
             }
 
+            Log.AddLog("XTRF uplink onbboarding - SQL mapping check succesful.", ErrorLevels.Information);
+
             HttpResponseMessage response;
-
-            response = await client.GetAsync("dictionaries/language/active");
-            response.EnsureSuccessStatusCode();
-
 
             try
             {
@@ -222,6 +222,7 @@ namespace BeLazy
                 Log.AddLog("Error processing XTRF client PM mappings. " + ex.Message, ErrorLevels.Error);
             }
 
+            Log.AddLog("Generating output for XTRF uplink onboarding.", ErrorLevels.Information);
             GenerateOutput();
         }
 

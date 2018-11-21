@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace BeLazy
 {
-    class Program
+    public class Program
     {
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             try
             {
                 Options.Initialize();
-                if (args.Length > 0)
+                if (args.Length > 0 && args[0] == "Onboarding")
                 {
                     Log.AddLog("Onboarding check starting", ErrorLevels.Information);
                     OnboardingManager om = new OnboardingManager();
@@ -23,7 +23,7 @@ namespace BeLazy
                     om.ManageOBTasks();
                     Log.AddLog("Running finished", ErrorLevels.Information);
                 }
-                else
+                else if(args.Length > 0 && args[0] == "Sync")
                 {
                     Log.AddLog("Data transfer started", ErrorLevels.Information);
                     SyncLinkProcessor slp = new SyncLinkProcessor();
@@ -31,7 +31,10 @@ namespace BeLazy
                     slp.ManageSyncTasks();
                     Log.AddLog("Running finished", ErrorLevels.Information);
                 }
-                Console.ReadKey();
+                else if (args.Length > 0 && args[0] == "ClearLog")
+                {
+                    DatabaseInterface.ClearLog();
+                }
             }
             catch (Exception ex)
             {
